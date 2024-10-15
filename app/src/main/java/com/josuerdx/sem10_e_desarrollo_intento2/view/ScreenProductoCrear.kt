@@ -1,5 +1,7 @@
 package com.josuerdx.sem10_e_desarrollo_intento2.view
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -15,7 +17,10 @@ import com.josuerdx.sem10_e_desarrollo_intento2.data.Categoria
 import com.josuerdx.sem10_e_desarrollo_intento2.data.Producto
 import com.josuerdx.sem10_e_desarrollo_intento2.data.ProductoApiService
 import kotlinx.coroutines.launch
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductoCrearScreen(navController: NavController, apiService: ProductoApiService) {
@@ -130,12 +135,14 @@ fun ProductoCrearScreen(navController: NavController, apiService: ProductoApiSer
 
                     if (stockValue != null && categoriaValue != null) {
                         coroutineScope.launch {
+                            val pubDate = OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+
                             val producto = Producto(
                                 id = 0,
                                 nombre = nombre,
                                 precio = precio,
                                 stock = stockValue,
-                                pubDate = "",
+                                pubDate = pubDate,
                                 categoria = categoriaValue,
                                 imagen = null,
                                 imagenUrl = null
@@ -161,3 +168,4 @@ fun ProductoCrearScreen(navController: NavController, apiService: ProductoApiSer
         }
     }
 }
+
