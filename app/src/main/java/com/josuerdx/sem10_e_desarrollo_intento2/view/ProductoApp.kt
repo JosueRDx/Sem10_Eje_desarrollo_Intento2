@@ -1,5 +1,6 @@
 package com.josuerdx.sem10_e_desarrollo_intento2.view
 
+import ProductoListScreen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
