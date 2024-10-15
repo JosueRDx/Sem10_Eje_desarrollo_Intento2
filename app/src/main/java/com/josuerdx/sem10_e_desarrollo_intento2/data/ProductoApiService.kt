@@ -19,4 +19,7 @@ interface ProductoApiService {
 
     @DELETE("productos/{id}/")
     suspend fun deleteProducto(@Path("id") id: Int): Response<Producto>
+
+    @GET("categorias/")
+    suspend fun getCategorias(): List<Categoria>
 }
