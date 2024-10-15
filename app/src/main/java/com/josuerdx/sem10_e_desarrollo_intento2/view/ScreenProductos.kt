@@ -35,10 +35,20 @@ fun ProductoListScreen(navController: NavController, apiService: ProductoApiServ
 fun ProductoItem(producto: Producto, navController: NavController) {
     Row {
         Text(text = producto.nombre)
-        IconButton(onClick = { /* Navigate to Edit */ }) {
+        IconButton(
+            onClick = {
+                // Navegar a la pantalla de edición con el ID del producto
+                navController.navigate("productoEditar/${producto.id}")
+            }
+        ) {
             Icon(Icons.Default.Edit, contentDescription = "Edit")
         }
-        IconButton(onClick = { /* Navigate to Delete */ }) {
+        IconButton(
+            onClick = {
+                // Navegar a la pantalla de eliminación con el ID del producto
+                navController.navigate("productoEliminar/${producto.id}")
+            }
+        ) {
             Icon(Icons.Default.Delete, contentDescription = "Delete")
         }
     }
