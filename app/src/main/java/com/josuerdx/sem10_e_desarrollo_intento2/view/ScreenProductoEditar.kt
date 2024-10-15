@@ -1,5 +1,7 @@
 package com.josuerdx.sem10_e_desarrollo_intento2.view
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -14,14 +16,20 @@ import androidx.navigation.NavController
 import com.josuerdx.sem10_e_desarrollo_intento2.data.Producto
 import com.josuerdx.sem10_e_desarrollo_intento2.data.ProductoApiService
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
-
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductoEditarScreen(navController: NavController, apiService: ProductoApiService, id: Int) {
     var nombre by remember { mutableStateOf("") }
     var precio by remember { mutableStateOf("") }
     var stock by remember { mutableStateOf("") }
     var categoria by remember { mutableStateOf("") }
+    var pubDate by remember { mutableStateOf("") } // Variable para manejar la fecha
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
@@ -33,6 +41,12 @@ fun ProductoEditarScreen(navController: NavController, apiService: ProductoApiSe
                 precio = producto.precio
                 stock = producto.stock.toString()
                 categoria = producto.categoria.toString()
+
+                // Conversión de LocalDateTime a OffsetDateTime con formato adecuado
+                val localDateTime = LocalDateTime.now()  // o producto.pubDate convertido, si está disponible
+                val offsetDateTime = localDateTime.atOffset(ZoneOffset.UTC)
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")
+                pubDate = offsetDateTime.format(formatter)
             }
         }
     }
@@ -92,6 +106,16 @@ fun ProductoEditarScreen(navController: NavController, apiService: ProductoApiSe
                 modifier = Modifier.fillMaxWidth()
             )
 
+            // Muestra el campo de pubDate formateado si es necesario
+            if (pubDate.isNotEmpty()) {
+                Text(
+                    text = "Fecha de Publicación: $pubDate",
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
+
             Button(
                 onClick = {
                     coroutineScope.launch {
@@ -100,13 +124,17 @@ fun ProductoEditarScreen(navController: NavController, apiService: ProductoApiSe
                             nombre = nombre,
                             precio = precio,
                             stock = stock.toIntOrNull() ?: 0,
-                            pubDate = "",
+                            pubDate = pubDate,
                             categoria = categoria.toIntOrNull() ?: 0,
                             imagen = null,
                             imagenUrl = null
                         )
-                        apiService.updateProducto(id, producto)
-                        navController.navigate("productos")
+                        val response = apiService.updateProducto(id, producto)
+                        if (response.isSuccessful) {
+                            navController.navigate("productos")
+                        } else {
+                            // Manejo de error en la respuesta
+                        }
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
